@@ -5,8 +5,8 @@ export async function getProductsService(params = {}) {
 	return res?.data;
 }
 
-export async function getProductDetails(id) {
-	const res = await api.get(`/products/${id}`);
+export async function getProductDetails(slug) {
+	const res = await api.get(`/products/${slug}`);
 	return res?.data;
 }
 
