@@ -1,7 +1,7 @@
 import { useState } from "react";
-import api from "../../api/axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/auth";
+import { getApiErrorMessage, loginService } from "../../services/authService";
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -14,12 +14,10 @@ export default function Login() {
         setLoading(true);
         setMessage("");
         try {
-            const res = await api.post('/login', {
+            const { token, user } = await loginService({
                 email,
                 password,
             });
-            const token = res?.data?.token;
-            const user = res?.data?.user;
             auth.login(user, token);
             switch (user?.role) {
                 case "admin":
@@ -33,9 +31,7 @@ export default function Login() {
                     break;
             }
         } catch (err) {
-            setMessage(
-                err?.response?.data?.message || 'login failed, try again later'
-            )
+            setMessage(getApiErrorMessage(err, "login failed, try again later"));
         } finally {
             setLoading(false)
         }
