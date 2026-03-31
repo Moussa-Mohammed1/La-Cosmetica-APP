@@ -1,14 +1,14 @@
 import { useState } from "react";
 import api from "../../api/axios";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/auth";
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
+    const auth = useAuthStore();
     async function handleSubmit(e) {
         e.preventDefault();
         setLoading(true);
@@ -19,8 +19,19 @@ export default function Login() {
                 password,
             });
             const token = res?.data?.token;
-            localStorage.setItem('token', token);
-            navigate('/');
+            const user = res?.data?.user;
+            auth.login(user, token);
+            switch (user?.role) {
+                case "admin":
+                    navigate('/dashboard');
+                    break;
+                case "client":
+                    navigate('/');
+                    break;
+                default:
+                    navigate('/')
+                    break;
+            }
         } catch (err) {
             setMessage(
                 err?.response?.data?.message || 'login failed, try again later'
@@ -76,7 +87,7 @@ export default function Login() {
                     <div className="pt-2 text-center text-sm text-gray-500 space-y-1">
                         <p>
                             Don't have an account?
-                            <a href="#" className="text-blue-400 hover:underline">Sign up</a>
+                            <Link to="/register" className=" pl-2  text-blue-400 hover:underline">Sign up</Link>
                         </p>
                     </div>
                 </form>
