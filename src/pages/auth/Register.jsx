@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../../api/axios";
+import { getApiErrorMessage, registerService } from "../../services/authService";
 
 export default function Register() {
     const [name, setName] = useState("");
@@ -30,7 +30,7 @@ export default function Register() {
 
         try {
             setLoading(true);
-            await api.post("/register", {
+            await registerService({
                 name,
                 email,
                 password,
@@ -43,9 +43,7 @@ export default function Register() {
             }, 900);
         } catch (err) {
             setIsError(true);
-            setMessage(
-                err?.response?.data?.message || "Register failed, try again later"
-            );
+            setMessage(getApiErrorMessage(err, "Register failed, try again later"));
         } finally {
             setLoading(false);
         }
