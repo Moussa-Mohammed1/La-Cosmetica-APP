@@ -24,10 +24,10 @@ export default function Login() {
                     navigate('/dashboard');
                     break;
                 case "client":
-                    navigate('/');
+                    navigate('/products');
                     break;
                 default:
-                    navigate('/')
+                    navigate('/products')
                     break;
             }
         } catch (err) {
